@@ -2,6 +2,7 @@ package com.BerdanAkbulut.saleproductservice.service;
 
 import com.BerdanAkbulut.saleproductservice.dto.ProductRequest;
 import com.BerdanAkbulut.saleproductservice.dto.ProductResponse;
+import com.BerdanAkbulut.saleproductservice.exception.ProductNotFoundException;
 import com.BerdanAkbulut.saleproductservice.model.Product;
 import com.BerdanAkbulut.saleproductservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,8 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    public ProductResponse getProduct(long id) {
-        Product product = productRepository.findById(id).orElse(null);
-        if(product == null) return null;
+    public ProductResponse getProduct(long id) throws ProductNotFoundException {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(String.format("Product with id %s not found.", id)));
         return mapToProductResponse(product);
     }
     public List<ProductResponse> getAllProducts() {
@@ -32,7 +32,7 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .price(productRequest.getPrice())
                 .build();
-        log.info("Product with id {} is saved", product.getId());
+        productRepository.save(product);
     }
     public void deleteProduct(long id) {
          productRepository.deleteById(id);

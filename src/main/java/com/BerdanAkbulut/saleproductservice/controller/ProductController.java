@@ -2,12 +2,13 @@ package com.BerdanAkbulut.saleproductservice.controller;
 
 import com.BerdanAkbulut.saleproductservice.dto.ProductRequest;
 import com.BerdanAkbulut.saleproductservice.dto.ProductResponse;
+import com.BerdanAkbulut.saleproductservice.exception.ProductNotFoundException;
 import com.BerdanAkbulut.saleproductservice.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -19,13 +20,13 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductResponse getProduct(@PathVariable("id") long id) {
+    public ProductResponse getProduct(@PathVariable("id") long id) throws ProductNotFoundException {
         return productService.getProduct(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveProduct(@RequestBody ProductRequest productRequest) {
+    public void saveProduct(@RequestBody @Valid ProductRequest productRequest) {
         productService.saveProduct(productRequest);
     }
 
