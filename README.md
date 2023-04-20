@@ -1,3 +1,3 @@
 # microservice-productservice
 
-Microservice - Product Service
+Microservice - Product Service v1
