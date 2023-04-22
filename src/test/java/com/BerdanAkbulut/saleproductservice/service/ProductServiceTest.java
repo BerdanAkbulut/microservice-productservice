@@ -1,6 +1,7 @@
 package com.BerdanAkbulut.saleproductservice.service;
 
 import com.BerdanAkbulut.saleproductservice.dto.ProductResponse;
+import com.BerdanAkbulut.saleproductservice.exception.ProductNotFoundException;
 import com.BerdanAkbulut.saleproductservice.model.Product;
 import com.BerdanAkbulut.saleproductservice.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
@@ -28,7 +29,7 @@ public class ProductServiceTest {
     private List<Product> productList = new ArrayList<>();
 
     @Test
-    public void getProductNotNull_test() {
+    public void getProductNotNull_test() throws ProductNotFoundException {
         Product product = Product.builder()
                 .name("product1")
                 .price(BigDecimal.valueOf(150.00))
@@ -42,7 +43,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void getProductNull_test() {
+    public void getProductNull_test() throws ProductNotFoundException {
         Mockito.when(productRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(null));
         ProductResponse productResponse = productService.getProduct(1);
         Assertions.assertThat(productResponse).isNull();
