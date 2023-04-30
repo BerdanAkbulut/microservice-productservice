@@ -7,6 +7,8 @@ import com.BerdanAkbulut.saleproductservice.model.Product;
 import com.BerdanAkbulut.saleproductservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +23,13 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(String.format("Product with id %s not found.", id)));
         return mapToProductResponse(product);
     }
+
+    @Cacheable(value = "products")
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream().map(this::mapToProductResponse).toList();
     }
+
+    @CacheEvict(value = "products", allEntries = true)
     public void saveProduct(ProductRequest productRequest) {
         Product product = Product
                 .builder()
