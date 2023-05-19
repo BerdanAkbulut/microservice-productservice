@@ -3,6 +3,7 @@ package com.BerdanAkbulut.saleproductservice.controller;
 import com.BerdanAkbulut.saleproductservice.dto.ProductRequest;
 import com.BerdanAkbulut.saleproductservice.dto.ProductResponse;
 import com.BerdanAkbulut.saleproductservice.exception.ProductNotFoundException;
+import com.BerdanAkbulut.saleproductservice.service.ElasticSearchService;
 import com.BerdanAkbulut.saleproductservice.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ElasticSearchService elasticSearchService;
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -27,6 +29,7 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void saveProduct(@RequestBody @Valid ProductRequest productRequest) {
+        elasticSearchService.addProduct("products", productRequest);
         productService.saveProduct(productRequest);
     }
 
@@ -40,5 +43,11 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/elastic")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductRequest> getAllProductsFromElastic() {
+        return elasticSearchService.getAllProducts("products");
     }
 }

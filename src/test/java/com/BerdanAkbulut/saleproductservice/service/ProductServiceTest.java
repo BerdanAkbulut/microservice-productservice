@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,10 +44,11 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void getProductNull_test() throws ProductNotFoundException {
+    public void getProductNull_test(){
         Mockito.when(productRepository.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(null));
-        ProductResponse productResponse = productService.getProduct(1);
-        Assertions.assertThat(productResponse).isNull();
+        assertThrows(ProductNotFoundException.class, () ->{
+            productService.getProduct(Mockito.anyLong());
+        });
     }
 
     @Test
